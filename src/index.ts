@@ -192,21 +192,21 @@ const ParserRule = {
           rule: [Type.InnerFactor],
           reduce(value) {
             return value;
-          }
+          },
         },
         {
           rule: [Token.Plus, Type.InnerFactor],
           reduce(Plus, value) {
             return value;
-          }
+          },
         },
         {
           rule: [Token.Minus, Type.InnerFactor],
           reduce(Minus, value: Complex) {
             return new Complex(-value.real, -value.imag);
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
     {
       left: Type.InnerFactor,

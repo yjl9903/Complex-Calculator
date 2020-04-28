@@ -11,11 +11,15 @@ export class Complex {
     if (this.real === 0 && this.imag === 0) {
       return '0';
     } else if (this.real === 0) {
-      return this.imag + 'i';
+      return (this.imag === 1 ? '' : this.imag === -1 ? '-' : this.imag) + 'i';
     } else if (this.imag === 0) {
       return String(this.real);
     } else {
-      return `${this.real} + ${this.imag}i`;
+      if (this.imag > 0) {
+        return `${this.real} + ${this.imag === 1 ? '' : this.imag}i`;
+      } else {
+        return `${this.real} - ${-this.imag === 1 ? '' : -this.imag}i`;
+      }
     }
   }
 
