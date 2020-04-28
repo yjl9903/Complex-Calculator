@@ -4,13 +4,17 @@ import { LRParser } from '@yjl9903/xparse';
 
 import { Complex } from './complex';
 
+const bindings = new Map<string, Complex>();
+
 enum Token {
+  Identifier = 'Identifier',
   Number = 'Number',
   Imaginary = 'Imaginary',
   Plus = 'Plus',
   Minus = 'Minus',
   Mul = 'Mul',
   Div = 'Div',
+  Assign = 'Assign',
   LRound = 'LRound',
   RRound = 'RRound',
   ABS = 'ABS',
@@ -20,14 +24,20 @@ enum Token {
 }
 
 enum Type {
+  Line = 'Line',
   Expr = 'Expr',
   Term = 'Term',
   Factor = 'Factor',
+  Unit = 'Unit',
 }
 
 const LexerRule = {
   hooks: {},
   tokens: [
+    {
+      type: Token.Identifier,
+      rule: '[a-zA-Z_][a-zA-Z0-9_]*',
+    },
     {
       type: Token.Number,
       rule: '[0-9]+(.[0-9]+)?(e|E)?-?([0-9]+)?',
@@ -73,6 +83,10 @@ const LexerRule = {
       rule: '/',
     },
     {
+      type: Token.Assign,
+      rule: '=',
+    },
+    {
       type: Token.LRound,
       rule: '\\(',
     },
@@ -103,8 +117,26 @@ const ParserRule = {
   hooks: {},
   tokens: Reflect.ownKeys(Token) as string[],
   types: Reflect.ownKeys(Type) as string[],
-  start: Type.Expr,
+  start: Type.Line,
   productions: [
+    {
+      left: Type.Line,
+      right: [
+        {
+          rule: [Token.Identifier, Token.Assign, Type.Expr],
+          reduce(id, assign, expr: Complex) {
+            bindings.set(id.value, expr);
+            return expr;
+          },
+        },
+        {
+          rule: [Type.Expr],
+          reduce(value) {
+            return value;
+          },
+        },
+      ],
+    },
     {
       left: Type.Expr,
       right: [
@@ -155,15 +187,9 @@ const ParserRule = {
       left: Type.Factor,
       right: [
         {
-          rule: [Token.Number],
-          reduce(a) {
-            return a.value;
-          },
-        },
-        {
-          rule: [Token.Imaginary],
-          reduce(a) {
-            return a.value;
+          rule: [Type.Unit],
+          reduce(value) {
+            return value;
           },
         },
         {
@@ -194,6 +220,34 @@ const ParserRule = {
           rule: [Token.CONJ, Token.LRound, Type.Expr, Token.RRound],
           reduce(conj, L, value) {
             return value.conj();
+          },
+        },
+      ],
+    },
+    {
+      left: Type.Unit,
+      right: [
+        {
+          rule: [Token.Number],
+          reduce(a) {
+            return a.value;
+          },
+        },
+        {
+          rule: [Token.Imaginary],
+          reduce(a) {
+            return a.value;
+          },
+        },
+        {
+          rule: [Token.Identifier],
+          reduce(a) {
+            const id = a.value;
+            if (bindings.has(id)) {
+              return bindings.get(id);
+            } else {
+              throw new Error(`${id} has not been bound`);
+            }
           },
         },
       ],
