@@ -35,10 +35,6 @@ const LexerRule = {
   hooks: {},
   tokens: [
     {
-      type: Token.Identifier,
-      rule: '[a-zA-Z_][a-zA-Z0-9_]*',
-    },
-    {
       type: Token.Number,
       rule: '[0-9]+(.[0-9]+)?(e|E)?-?([0-9]+)?',
       callback({ type, value }) {
@@ -109,6 +105,10 @@ const LexerRule = {
     {
       type: Token.CONJ,
       rule: 'conj',
+    },
+    {
+      type: Token.Identifier,
+      rule: '[a-zA-Z_][a-zA-Z0-9_]*',
     },
   ],
 };
