@@ -1,13 +1,13 @@
 {
   "name": "complex-calculator",
   "version": "1.0.0",
-  "main": "dist/index.js",
-  "author": "XLor",
   "license": "MIT",
+  "author": "XLor",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
-    "lint": "yarn prettier --parser typescript --write src/**/*.ts"
+    "lint": "yarn prettier --parser typescript --write src/**/*.ts",
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "@yjl9903/xparse": "^1.1.0",
