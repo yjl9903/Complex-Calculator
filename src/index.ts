@@ -3,6 +3,7 @@ import { Lexer } from 'xlex';
 import { LRParser } from '@yjl9903/xparse';
 
 import { Complex } from './complex';
+import { type } from 'os';
 
 const bindings = new Map<string, Complex>();
 
@@ -28,6 +29,7 @@ enum Type {
   Expr = 'Expr',
   Term = 'Term',
   Factor = 'Factor',
+  InnerFactor = 'InnerFactor',
   Unit = 'Unit',
 }
 
@@ -185,6 +187,29 @@ const ParserRule = {
     },
     {
       left: Type.Factor,
+      right: [
+        {
+          rule: [Type.InnerFactor],
+          reduce(value) {
+            return value;
+          }
+        },
+        {
+          rule: [Token.Plus, Type.InnerFactor],
+          reduce(Plus, value) {
+            return value;
+          }
+        },
+        {
+          rule: [Token.Minus, Type.InnerFactor],
+          reduce(Minus, value: Complex) {
+            return new Complex(-value.real, -value.imag);
+          }
+        }
+      ]
+    },
+    {
+      left: Type.InnerFactor,
       right: [
         {
           rule: [Type.Unit],
