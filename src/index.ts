@@ -38,7 +38,7 @@ const LexerRule = {
   tokens: [
     {
       type: Token.Number,
-      rule: '[0-9]+(.[0-9]+)?(e|E)?-?([0-9]+)?',
+      rule: '[0-9]+(.[0-9]+)?(e|E)?(+|-)?([0-9]+)?',
       callback({ type, value }) {
         const num = Number.parseFloat(value);
         return {
