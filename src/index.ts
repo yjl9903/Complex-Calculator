@@ -3,7 +3,6 @@ import { Lexer } from 'xlex';
 import { LRParser } from '@yjl9903/xparse';
 
 import { Complex } from './complex';
-import { type } from 'os';
 
 const bindings = new Map<string, Complex>();
 
